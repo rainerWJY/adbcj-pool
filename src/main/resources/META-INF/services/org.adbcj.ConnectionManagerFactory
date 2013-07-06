@@ -1,0 +1,2 @@
+org.adbcj.mysql.netty.MySqlConnectionManagerFactory
+org.adbcj.mysql.pool.WrappedMysqlConnectionManagerFactory
