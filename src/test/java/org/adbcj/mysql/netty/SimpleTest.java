@@ -55,15 +55,20 @@ public class SimpleTest {
     @Test
     public void testSimple() throws Exception {
         prepare_notNull();
-        Connection connection = cm.connect().get();
-        DbSessionFuture<PreparedStatement> ps = connection.prepareStatement("select pk,varcharr from type_test where pk = ?");
-        DbFuture<ResultSet> result = ps.get().executeQuery(0);
-        ResultSet r = result.get();
-        Row row = r.iterator().next();
-        Value[] values = row.getValues();
-        // pk
-        Assert.assertEquals(0, values[0].getValue());
-        // varcharr varch
-        Assert.assertEquals("varch", values[1].getValue());
+        for (int i = 0; i < 1000000; i++) {
+            try {
+                Connection connection = cm.connect().get();
+                DbSessionFuture<PreparedStatement> ps = connection.prepareStatement("select pk,varcharr from type_test where pk = ?");
+                DbFuture<ResultSet> result = ps.get().executeQuery(0);
+                ResultSet r = result.get();
+                Row row = r.iterator().next();
+                Value[] values = row.getValues();
+                System.out.println(values[1].getValue());
+                connection.close(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println(1);
+        }
     }
 }

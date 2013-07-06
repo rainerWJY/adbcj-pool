@@ -56,27 +56,48 @@ public class WrappedMysqlConnection implements Connection {
     }
 
     public DbSessionFuture<ResultSet> executeQuery(String sql) {
-        return conn.executeQuery(sql);
+        return new WrappedDBSessionFuture<ResultSet>(conn.executeQuery(sql),this);
     }
 
     public <T> DbSessionFuture<T> executeQuery(String sql, ResultEventHandler<T> eventHandler, T accumulator) {
-        return conn.executeQuery(sql, eventHandler, accumulator);
+        return new WrappedDBSessionFuture<T>(conn.executeQuery(sql, eventHandler, accumulator),this);
     }
 
     public DbSessionFuture<Result> executeUpdate(String sql) {
-        return conn.executeUpdate(sql);
+        return new WrappedDBSessionFuture<Result>(conn.executeUpdate(sql),this);
     }
 
     public DbSessionFuture<PreparedStatement> prepareStatement(String sql) {
-        return conn.prepareStatement(sql);
+        PreparedStatement ps;
+        try {
+            ps = new WrappedMysqlPreparedStatement(conn.prepareStatement(sql).get(), this);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("should not be here!",e);
+        }
+        return DefaultDbSessionFuture.createCompletedFuture(conn, ps) ;
     }
 
     public DbSessionFuture<PreparedStatement> prepareStatement(Object key, String sql) {
-        return conn.prepareStatement(key, sql);
+        PreparedStatement ps;
+        try {
+            ps = new WrappedMysqlPreparedStatement(conn.prepareStatement(key,sql).get(), this);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("should not be here!",e);
+        }
+        return DefaultDbSessionFuture.createCompletedFuture(conn, ps) ;
+   
     }
 
     public boolean isClosed() throws DbException {
         return conn.isClosed();
+    }
+    
+    public void invalidThisConn() throws DbException {
+        try {
+            pool.invalidateObject(conn);
+        } catch (Exception e) {
+            throw new DbException(e);
+        }
     }
 
 }

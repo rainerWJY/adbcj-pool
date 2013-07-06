@@ -29,8 +29,8 @@ public class WrappedMysqlConnectionManager extends AbstractMySqlConnectionManage
             properties);
         PoolableObjectFactory<Connection> factory = new WrappedMysqlConnectionPoolableObject(plainMySQLConnectionManager);
         config.setLifo(false);
-        config.setMaxTotal(10);
-        config.setMaxIdle(5);
+        config.setMaxTotal(15);
+        config.setMaxIdle(10);
         config.setMinIdle(1);
         config.setMaxWaitMillis(5 * 1000);
         pool = new GenericObjectPool<Connection>(factory, config);
