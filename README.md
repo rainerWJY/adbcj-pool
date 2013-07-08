@@ -13,14 +13,14 @@ mvn install之
 
 ConnectionManager cm = ConnectionManagerProvider.createConnectionManager("adbcj:pooledMysqlnetty://localhost/unit_test",
                                              "root",
-                                             "");
+                                             "");  
                                              
 这样就可以创建一个连接池
 
-Connection connection = cm.connect().get();
-DbSessionFuture<Result> result = connection.executeUpdate("delete from type_test");
-Assert.assertTrue(result.get().getAffectedRows() > -1);
-connection.close(true);
+Connection connection = cm.connect().get();  
+DbSessionFuture<Result> result = connection.executeUpdate("delete from type_test");  
+Assert.assertTrue(result.get().getAffectedRows() > -1);  
+connection.close(true);  
 
-
+  
 这样就可以执行一个sql. 
